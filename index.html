@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -74,18 +74,67 @@
       text-decoration: line-through;
       opacity: 0.5;
     }
+    .form-card {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+.form-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.ingredient-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.ingredient-row input {
+  margin: 0;
+}
+
+.delete-btn {
+  background-color: #ff5252;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.secondary {
+  background-color: #888;
+}
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
   </style>
 </head>
 
 <body>
-<h2>➕ Ajouter une recette</h2>
+<h2>➕ Nouvelle recette</h2>
 
-<input id="nomRecette" placeholder="Nom de la recette">
+<div class="form-card">
 
-<div id="ingredientsForm"></div>
+  <input id="nomRecette" placeholder="Nom de la recette">
 
-<button onclick="ajouterIngredient()">+ Ajouter ingrédient</button>
-<button onclick="sauvegarderRecette()">Enregistrer la recette</button>
+  <div id="ingredientsForm"></div>
+
+  <button class="secondary" onclick="ajouterIngredient()">+ Ajouter un ingrédient</button>
+
+  <button onclick="sauvegarderRecette()">Enregistrer la recette</button>
+
+</div>
+
 
 <h1>🛒 Mes recettes</h1>
 
@@ -100,22 +149,48 @@
 <script>
 
 // =====================
+// LISTE RAYONS
+// =====================
+const rayons = [
+  { nom: "Viandes et poisson", ordre: 1 },
+  { nom: "Fruits Légumes", ordre: 2 },
+  { nom: "Pains pâtisseries", ordre: 3 },
+  { nom: "Lait oeuf fromages", ordre: 4 },
+  { nom: "Charcuterie Traiteur", ordre: 5 },  
+  { nom: "Surgélé", ordre: 6 },
+  { nom: "Conserve Epicerie salé Sauce", ordre: 7 },
+  { nom: "Epicerie sucrée", ordre: 8 },
+  { nom: "Boisson", ordre: 9 }
+];
+
+  
+// =====================
 // AJOUTER INGREDIENTS
 // =====================
 function ajouterIngredient() {
   let div = document.getElementById("ingredientsForm");
 
   let container = document.createElement("div");
+  container.className = "ingredient-row";
+
+  let options = rayons.map(r => `<option value="${r.ordre}">${r.nom}</option>`).join("");
 
   container.innerHTML = `
     <input placeholder="Nom">
-    <input type="number" placeholder="Quantité">
+    <input type="number" placeholder="Qté">
     <input placeholder="Unité">
-    <input type="number" placeholder="Ordre rayon">
+    <select>${options}</select>
+    <button class="delete-btn">✕</button>
   `;
+
+  container.querySelector("button").onclick = () => {
+    container.remove();
+  };
 
   div.appendChild(container);
 }
+
+
 // =====================
 // SAUVEGARDER RECETTE
 // =====================
@@ -125,16 +200,20 @@ function sauvegarderRecette() {
 
   let ingredients = [];
 
-  for (let bloc of blocs) {
-    let inputs = bloc.querySelectorAll("input");
+for (let bloc of blocs) {
+  let inputs = bloc.querySelectorAll("input");
+  let select = bloc.querySelector("select");
 
-    ingredients.push({
-      nom: inputs[0].value,
-      quantite: parseFloat(inputs[1].value),
-      unite: inputs[2].value,
-      ordre: parseInt(inputs[3].value)
-    });
-  }
+  if (inputs[0].value.trim() === "") continue;
+
+  ingredients.push({
+    nom: inputs[0].value,
+    quantite: parseFloat(inputs[1].value) || 0,
+    unite: inputs[2].value,
+    ordre: parseInt(select.value)
+  });
+}
+
 
   let nouvelleRecette = {
     nom: nom,
@@ -150,7 +229,8 @@ function sauvegarderRecette() {
   afficherRecettes();
 }
 
-  
+document.getElementById("nomRecette").value = "";
+document.getElementById("ingredientsForm").innerHTML = "";
   
 // =====================
 // DONNÉES (à personnaliser)
@@ -303,4 +383,3 @@ restaurerEtat();
 
 </body>
 </html>
-```
