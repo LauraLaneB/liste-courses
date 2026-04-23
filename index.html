@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Liste de courses</title>
+</head>
+<body>
+
+<h1>Mes recettes</h1>
+
+<div id="recettes"></div>
+
+<button onclick="genererListe()">Générer ma liste</button>
+
+<h2>Liste de courses</h2>
+<ul id="courses"></ul>
+
+<script>
+let recettes = [
+  {
+    nom: "Omelette",
+    ingredients: [
+      { nom: "oeuf", quantite: 2, unite: "pièce", ordre: 1 },
+      { nom: "lait", quantite: 10, unite: "cl", ordre: 2 }
+    ]
+  },
+  {
+    nom: "Pancakes",
+    ingredients: [
+      { nom: "oeuf", quantite: 3, unite: "pièce", ordre: 1 },
+      { nom: "lait", quantite: 20, unite: "cl", ordre: 2 }
+    ]
+  }
+];
+
+function afficherRecettes() {
+  let div = document.getElementById("recettes");
+
+  recettes.forEach((r, index) => {
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "recette_" + index;
+
+    let label = document.createElement("label");
+    label.innerText = r.nom;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    div.appendChild(document.createElement("br"));
+  });
+}
+
+function genererListe() {
+  let liste = {};
+
+  recettes.forEach((r, index) => {
+    let checked = document.getElementById("recette_" + index).checked;
+
+    if (checked) {
+      r.ingredients.forEach(ing => {
+        if (liste[ing.nom]) {
+          liste[ing.nom].quantite += ing.quantite;
+        } else {
+          liste[ing.nom] = { ...ing };
+        }
+      });
+    }
+  });
+
+  let ul = document.getElementById("courses");
+  ul.innerHTML = "";
+
+  Object.values(liste)
+    .sort((a, b) => a.ordre - b.ordre)
+    .forEach(ing => {
+      let li = document.createElement("li");
+      li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
+      ul.appendChild(li);
+    });
+}
+
+afficherRecettes();
+</script>
+
+</body>
+</html>
