@@ -31,10 +31,22 @@ h2 {
   font-size: 18px;
 }
 
-.recette input {
+  .recette {
+  justify-content: space-between;
+}
+
+.recette input[type="checkbox"] {
   margin-right: 10px;
   transform: scale(1.5);
 }
+
+.recette input[type="number"] {
+  width: 50px;
+  text-align: center;
+  margin-left: auto;
+  transform: none;
+}
+
 
 button {
   width: 100%;
@@ -93,6 +105,13 @@ button {
   grid-template-columns: 2fr 1fr 1fr 1fr auto;
   gap: 5px;
 }
+
+  .recette button {
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 8px;
+}
+
 </style>
 </head>
 
@@ -274,23 +293,66 @@ function afficherRecettes() {
 
     let label = document.createElement("label");
     label.innerText = r.nom;
+    label.style.flex = "1";
 
-    // quand on coche → demander nb personnes
-    checkbox.onchange = () => {
-      if (checkbox.checked) {
-        let nb = prompt("Pour combien de personnes ?", "1");
-        portions[index] = parseInt(nb) || 1;
-      } else {
-        delete portions[index];
+    // container pour boutons +/- (caché au début)
+    let qtyContainer = document.createElement("div");
+    qtyContainer.style.display = "none";
+    qtyContainer.style.alignItems = "center";
+    qtyContainer.style.gap = "5px";
+
+    let btnMoins = document.createElement("button");
+    btnMoins.innerText = "−";
+    btnMoins.style.width = "40px";
+
+    let span = document.createElement("span");
+    span.innerText = "1";
+    span.style.minWidth = "20px";
+    span.style.textAlign = "center";
+
+    let btnPlus = document.createElement("button");
+    btnPlus.innerText = "+";
+    btnPlus.style.width = "40px";
+
+    // valeur initiale
+    portions[index] = 1;
+
+    btnPlus.onclick = () => {
+      portions[index]++;
+      span.innerText = portions[index];
+    };
+
+    btnMoins.onclick = () => {
+      if (portions[index] > 1) {
+        portions[index]--;
+        span.innerText = portions[index];
       }
     };
 
+    // afficher/masquer
+    checkbox.onchange = () => {
+      if (checkbox.checked) {
+        qtyContainer.style.display = "flex";
+      } else {
+        qtyContainer.style.display = "none";
+        portions[index] = 1;
+        span.innerText = "1";
+      }
+    };
+
+    qtyContainer.appendChild(btnMoins);
+    qtyContainer.appendChild(span);
+    qtyContainer.appendChild(btnPlus);
+
     container.appendChild(checkbox);
     container.appendChild(label);
+    container.appendChild(qtyContainer);
 
     div.appendChild(container);
   });
 }
+
+
 
 // =====================
 // GENERER LISTE
