@@ -155,7 +155,8 @@ select {
   
 const supabaseUrl = "https://napdbjcoqgyasyolmxzm.supabase.co/rest/v1/";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcGRiamNvcWd5YXN5b2xteHptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njk1ODMsImV4cCI6MjA5MjU0NTU4M30.7ogpMMEeuLuoffJ93ZC-Sl8IROOP_fRf8ocqVJi80oU";
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
 
 // =====================
 // LISTE RAYONS
