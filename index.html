@@ -242,7 +242,7 @@ async function sauvegarderRecette() {
     recette_id: recette.id
   }));
 
-  await supabase.from("ingredients").insert(ingredientsAvecID);
+  await client.from("ingredients").insert(ingredientsAvecID);
 
   alert("Recette enregistrée !");
 }
@@ -255,9 +255,9 @@ document.getElementById("ingredientsForm").innerHTML = "";
 // CHARGER LES RECETTES
 // =====================
 async function chargerRecettes() {
-  let { data: recettesData } = await supabase.from("recettes").select("*");
+  let { data: recettesData } = await client.from("recettes").select("*");
 
-  let { data: ingredientsData } = await supabase.from("ingredients").select("*");
+  let { data: ingredientsData } = await client.from("ingredients").select("*");
 
   recettes = recettesData.map(r => {
     return {
