@@ -251,6 +251,9 @@ async function sauvegarderRecette() {
 document.getElementById("nomRecette").value = "";
 document.getElementById("ingredientsForm").innerHTML = "";
 
+  // 👉 recharge les recettes
+await chargerRecettes();
+
 // =====================
 // CHARGER LES RECETTES
 // =====================
