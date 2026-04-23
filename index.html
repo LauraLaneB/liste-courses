@@ -1,7 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 15px;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  text-align: center;
+}
+
+#recettes {
+  margin-bottom: 20px;
+}
+
+.recette {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.recette input {
+  margin-right: 10px;
+  transform: scale(1.5);
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: #4CAF50;
+  color: white;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#courses {
+  list-style: none;
+  padding: 0;
+}
+
+#courses li {
+  background: white;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+</style>
+
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Liste de courses</title>
 </head>
 <body>
@@ -35,8 +97,12 @@ let recettes = [
 
 function afficherRecettes() {
   let div = document.getElementById("recettes");
+  div.innerHTML = "";
 
   recettes.forEach((r, index) => {
+    let container = document.createElement("div");
+    container.className = "recette";
+
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.id = "recette_" + index;
@@ -44,11 +110,13 @@ function afficherRecettes() {
     let label = document.createElement("label");
     label.innerText = r.nom;
 
-    div.appendChild(checkbox);
-    div.appendChild(label);
-    div.appendChild(document.createElement("br"));
+    container.appendChild(checkbox);
+    container.appendChild(label);
+
+    div.appendChild(container);
   });
 }
+
 
 function genererListe() {
   let liste = {};
