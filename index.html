@@ -1,88 +1,99 @@
+```html
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 15px;
-  background-color: #f5f5f5;
-}
-
-h1 {
-  text-align: center;
-}
-
-#recettes {
-  margin-bottom: 20px;
-}
-
-.recette {
-  display: flex;
-  align-items: center;
-  background: white;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  font-size: 18px;
-}
-
-.recette input {
-  margin-right: 10px;
-  transform: scale(1.5);
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: #4CAF50;
-  color: white;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-#courses {
-  list-style: none;
-  padding: 0;
-}
-
-#courses li {
-  background: white;
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 18px;
-}
-    .checked {
-  text-decoration: line-through;
-  opacity: 0.5;
-}
-
-</style>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste de courses</title>
 
-  <title>Ma liste de courses</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 15px;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #recettes {
+      margin-bottom: 20px;
+    }
+
+    .recette {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+
+    .recette input {
+      margin-right: 10px;
+      transform: scale(1.5);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    button:last-of-type {
+      background-color: #2196F3;
+    }
+
+    #courses {
+      list-style: none;
+      padding: 0;
+    }
+
+    #courses li {
+      background: white;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+
+    #courses li:active {
+      transform: scale(0.98);
+    }
+
+    .checked {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>Mes recettes</h1>
+<h1>🛒 Mes recettes</h1>
 
 <div id="recettes"></div>
 
 <button onclick="genererListe()">Générer ma liste</button>
+<button onclick="copierListe()">Copier la liste</button>
 
 <h2>Liste de courses</h2>
 <ul id="courses"></ul>
 
 <script>
+
+// =====================
+// DONNÉES (à personnaliser)
+// =====================
 let recettes = [
   {
     nom: "Omelette",
@@ -100,6 +111,9 @@ let recettes = [
   }
 ];
 
+// =====================
+// AFFICHAGE RECETTES
+// =====================
 function afficherRecettes() {
   let div = document.getElementById("recettes");
   div.innerHTML = "";
@@ -122,7 +136,9 @@ function afficherRecettes() {
   });
 }
 
-
+// =====================
+// GENERER LISTE
+// =====================
 function genererListe() {
   let liste = {};
 
@@ -143,24 +159,91 @@ function genererListe() {
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
 
-Object.values(liste)
-  .sort((a, b) => a.ordre - b.ordre)
-  .forEach(ing => {
-    let li = document.createElement("li");
-    li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
+  Object.values(liste)
+    .sort((a, b) => a.ordre - b.ordre)
+    .forEach(ing => {
+      let li = document.createElement("li");
+      li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
 
-    // 👉 clic = barrer / débarrer
+      li.onclick = () => {
+        li.classList.toggle("checked");
+        sauvegarderEtat();
+      };
+
+      ul.appendChild(li);
+    });
+
+  sauvegarderEtat();
+}
+
+// =====================
+// COPIER LISTE
+// =====================
+function copierListe() {
+  let items = document.querySelectorAll("#courses li");
+  let texte = "";
+
+  items.forEach(li => {
+    texte += li.innerText + "\n";
+  });
+
+  navigator.clipboard.writeText(texte);
+  alert("Liste copiée !");
+}
+
+// =====================
+// SAUVEGARDE
+// =====================
+function sauvegarderEtat() {
+  let items = document.querySelectorAll("#courses li");
+  let etat = [];
+
+  items.forEach(li => {
+    etat.push({
+      texte: li.innerText,
+      checked: li.classList.contains("checked")
+    });
+  });
+
+  localStorage.setItem("listeCourses", JSON.stringify(etat));
+}
+
+// =====================
+// RESTAURATION
+// =====================
+function restaurerEtat() {
+  let data = localStorage.getItem("listeCourses");
+  if (!data) return;
+
+  let etat = JSON.parse(data);
+  let ul = document.getElementById("courses");
+  ul.innerHTML = "";
+
+  etat.forEach(item => {
+    let li = document.createElement("li");
+    li.innerText = item.texte;
+
+    if (item.checked) {
+      li.classList.add("checked");
+    }
+
     li.onclick = () => {
       li.classList.toggle("checked");
+      sauvegarderEtat();
     };
 
     ul.appendChild(li);
   });
-
 }
 
+// =====================
+// INIT
+// =====================
 afficherRecettes();
+restaurerEtat();
+
 </script>
 
 </body>
 </html>
+```
