@@ -156,7 +156,21 @@ select {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
+// =====================
+// AFFICHER AJOUTER NOUVELLE RECETTE SI JE CLIQUE DESSUS
+// =====================
+function toggleForm() {
+  let form = document.getElementById("formContainer");
+  let arrow = document.getElementById("arrow");
 
+  if (form.style.display === "none") {
+    form.style.display = "block";
+    arrow.innerText = "▲";
+  } else {
+    form.style.display = "none";
+    arrow.innerText = "▼";
+  }
+}
 // =====================
 // CONNECTION BASE DONNEES SUPABASE
 // =====================
@@ -181,23 +195,7 @@ const rayons = [
   { nom: "Boisson", ordre: 9 }
 ];
 
-// =====================
-// AFFICHER AJOUTER NOUVELLE RECETTE SI JE CLIQUE DESSUS
-// =====================
-function toggleForm() {
-  let form = document.getElementById("formContainer");
-  let arrow = document.getElementById("arrow");
-
-  if (form.style.display === "none") {
-    form.style.display = "block";
-    arrow.innerText = "▲";
-  } else {
-    form.style.display = "none";
-    arrow.innerText = "▼";
-  }
-}
-
-  
+ 
   
 // =====================
 // AJOUTER INGREDIENTS
