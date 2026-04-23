@@ -59,6 +59,11 @@ button:hover {
   border-radius: 10px;
   font-size: 18px;
 }
+    .checked {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
 </style>
 
   <meta charset="UTF-8">
@@ -138,13 +143,20 @@ function genererListe() {
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
 
-  Object.values(liste)
-    .sort((a, b) => a.ordre - b.ordre)
-    .forEach(ing => {
-      let li = document.createElement("li");
-      li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
-      ul.appendChild(li);
-    });
+Object.values(liste)
+  .sort((a, b) => a.ordre - b.ordre)
+  .forEach(ing => {
+    let li = document.createElement("li");
+    li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
+
+    // 👉 clic = barrer / débarrer
+    li.onclick = () => {
+      li.classList.toggle("checked");
+    };
+
+    ul.appendChild(li);
+  });
+
 }
 
 afficherRecettes();
