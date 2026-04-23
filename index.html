@@ -339,9 +339,38 @@ function genererListe() {
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
 
-  Object.values(liste)
-    .sort((a, b) => a.ordre - b.ordre)
-    .forEach(ing => {
+let ul = document.getElementById("courses");
+ul.innerHTML = "";
+
+// regrouper par rayon
+let groupes = {};
+
+Object.values(liste).forEach(ing => {
+  if (!groupes[ing.ordre]) {
+    groupes[ing.ordre] = [];
+  }
+  groupes[ing.ordre].push(ing);
+});
+
+// trier les rayons
+Object.keys(groupes)
+  .sort((a, b) => a - b)
+  .forEach(ordre => {
+
+    // trouver nom du rayon
+    let rayon = rayons.find(r => r.ordre == ordre);
+
+    // titre du rayon
+    let titre = document.createElement("li");
+    titre.innerText = rayon ? rayon.nom : "Autre";
+    titre.style.fontWeight = "bold";
+    titre.style.marginTop = "15px";
+    titre.style.background = "transparent";
+
+    ul.appendChild(titre);
+
+    // ingrédients du rayon
+    groupes[ordre].forEach(ing => {
       let li = document.createElement("li");
       li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
 
@@ -352,6 +381,8 @@ function genererListe() {
 
       ul.appendChild(li);
     });
+  });
+
 
   sauvegarderEtat();
 }
