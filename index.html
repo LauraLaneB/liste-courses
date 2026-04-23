@@ -1,151 +1,117 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Liste de courses</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liste de courses</title>
 
-  <style>
+<style>
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 15px;
+  background: #f5f5f5;
+}
+
+h1 {
+  text-align: center;
+}
+
 h2 {
   user-select: none;
 }
-    
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 15px;
-      background-color: #f5f5f5;
-    }
 
-    h1 {
-      text-align: center;
-    }
+.recette {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 18px;
+}
 
-    #recettes {
-      margin-bottom: 20px;
-    }
+.recette input {
+  margin-right: 10px;
+  transform: scale(1.5);
+}
 
-    .recette {
-      display: flex;
-      align-items: center;
-      background: white;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      font-size: 18px;
-    }
+button {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #4CAF50;
+  color: white;
+}
 
-    .recette input {
-      margin-right: 10px;
-      transform: scale(1.5);
-    }
+.secondary {
+  background: #888;
+}
 
-    button {
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 10px;
-      background-color: #4CAF50;
-      color: white;
-    }
+.delete-btn {
+  background: #ff5252;
+}
 
-    button:last-of-type {
-      background-color: #2196F3;
-    }
+#courses {
+  list-style: none;
+  padding: 0;
+}
 
-    #courses {
-      list-style: none;
-      padding: 0;
-    }
+#courses li {
+  background: white;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 18px;
+}
 
-    #courses li {
-      background: white;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 18px;
-      transition: all 0.2s;
-    }
+.checked {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
 
-    #courses li:active {
-      transform: scale(0.98);
-    }
-
-    .checked {
-      text-decoration: line-through;
-      opacity: 0.5;
-    }
-    .form-card {
+.form-card {
   background: white;
   padding: 15px;
   border-radius: 15px;
   margin-bottom: 20px;
 }
 
-.form-card input {
+.form-card input, select {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
   border: 1px solid #ccc;
-  font-size: 16px;
 }
 
 .ingredient-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr auto;
   gap: 5px;
-  margin-bottom: 10px;
 }
-
-.ingredient-row input {
-  margin: 0;
-}
-
-.delete-btn {
-  background-color: #ff5252;
-  color: white;
-  border: none;
-  border-radius: 8px;
-}
-
-.secondary {
-  background-color: #888;
-}
-select {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-  </style>
+</style>
 </head>
 
 <body>
+
 <h2 onclick="toggleForm()" style="cursor:pointer;">
-  ➕ Nouvelle recette <span id="arrow">▼</span>
+➕ Nouvelle recette <span id="arrow">▼</span>
 </h2>
 
 <div id="formContainer" style="display:none;">
   <div class="form-card">
-
     <input id="nomRecette" placeholder="Nom de la recette">
-
     <div id="ingredientsForm"></div>
-
     <button class="secondary" onclick="ajouterIngredient()">+ Ajouter un ingrédient</button>
-
     <button onclick="sauvegarderRecette()">Enregistrer la recette</button>
-
   </div>
 </div>
 
-
 <h1>🛒 Mes recettes</h1>
-
 <div id="recettes"></div>
 
 <button onclick="genererListe()">Générer ma liste</button>
@@ -153,11 +119,40 @@ select {
 
 <h2>Liste de courses</h2>
 <ul id="courses"></ul>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
+
 // =====================
-// AFFICHER AJOUTER NOUVELLE RECETTE SI JE CLIQUE DESSUS
+// SUPABASE
+// =====================
+const supabaseUrl = "https://napdbjcoqgyasyolmxzm.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcGRiamNvcWd5YXN5b2xteHptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njk1ODMsImV4cCI6MjA5MjU0NTU4M30.7ogpMMEeuLuoffJ93ZC-Sl8IROOP_fRf8ocqVJi80oU";
+const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+// =====================
+// RAYONS
+// =====================
+const rayons = [
+  { nom: "Viandes et poisson", ordre: 1 },
+  { nom: "Fruits Légumes", ordre: 2 },
+  { nom: "Pains pâtisseries", ordre: 3 },
+  { nom: "Lait oeuf fromages", ordre: 4 },
+  { nom: "Charcuterie Traiteur", ordre: 5 },
+  { nom: "Surgelé", ordre: 6 },
+  { nom: "Épicerie salée", ordre: 7 },
+  { nom: "Épicerie sucrée", ordre: 8 },
+  { nom: "Boisson", ordre: 9 }
+];
+
+// =====================
+// VARIABLES
+// =====================
+let recettes = [];
+
+// =====================
+// TOGGLE FORM
 // =====================
 function toggleForm() {
   let form = document.getElementById("formContainer");
@@ -171,42 +166,17 @@ function toggleForm() {
     arrow.innerText = "▼";
   }
 }
-// =====================
-// CONNECTION BASE DONNEES SUPABASE
-// =====================
-  
-const supabaseUrl = "https://napdbjcoqgyasyolmxzm.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcGRiamNvcWd5YXN5b2xteHptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njk1ODMsImV4cCI6MjA5MjU0NTU4M30.7ogpMMEeuLuoffJ93ZC-Sl8IROOP_fRf8ocqVJi80oU";
-const client = supabase.createClient(supabaseUrl, supabaseKey);
-
 
 // =====================
-// LISTE RAYONS
-// =====================
-const rayons = [
-  { nom: "Viandes et poisson", ordre: 1 },
-  { nom: "Fruits Légumes", ordre: 2 },
-  { nom: "Pains pâtisseries", ordre: 3 },
-  { nom: "Lait oeuf fromages", ordre: 4 },
-  { nom: "Charcuterie Traiteur", ordre: 5 },  
-  { nom: "Surgélé", ordre: 6 },
-  { nom: "Conserve Epicerie salé Sauce", ordre: 7 },
-  { nom: "Epicerie sucrée", ordre: 8 },
-  { nom: "Boisson", ordre: 9 }
-];
-
- 
-  
-// =====================
-// AJOUTER INGREDIENTS
+// AJOUT INGREDIENT
 // =====================
 function ajouterIngredient() {
   let div = document.getElementById("ingredientsForm");
 
+  let options = rayons.map(r => `<option value="${r.ordre}">${r.nom}</option>`).join("");
+
   let container = document.createElement("div");
   container.className = "ingredient-row";
-
-  let options = rayons.map(r => `<option value="${r.ordre}">${r.nom}</option>`).join("");
 
   container.innerHTML = `
     <input placeholder="Nom">
@@ -216,18 +186,16 @@ function ajouterIngredient() {
     <button class="delete-btn">✕</button>
   `;
 
-  container.querySelector("button").onclick = () => {
-    container.remove();
-  };
+  container.querySelector("button").onclick = () => container.remove();
 
   div.appendChild(container);
 }
 
-
 // =====================
-// SAUVEGARDER RECETTE
+// SAUVEGARDE RECETTE
 // =====================
 async function sauvegarderRecette() {
+
   let nom = document.getElementById("nomRecette").value;
   let blocs = document.getElementById("ingredientsForm").children;
 
@@ -237,7 +205,7 @@ async function sauvegarderRecette() {
     let inputs = bloc.querySelectorAll("input");
     let select = bloc.querySelector("select");
 
-    if (inputs[0].value.trim() === "") continue;
+    if (!inputs[0].value.trim()) continue;
 
     ingredients.push({
       nom: inputs[0].value,
@@ -247,19 +215,12 @@ async function sauvegarderRecette() {
     });
   }
 
-  // 1. insérer recette
-  let { data: recette, error } = await client
+  let { data: recette } = await client
     .from("recettes")
-    .insert([{ nom: nom }])
+    .insert([{ nom }])
     .select()
     .single();
 
-  if (error) {
-    alert("Erreur recette");
-    return;
-  }
-
-  // 2. insérer ingrédients
   let ingredientsAvecID = ingredients.map(i => ({
     ...i,
     recette_id: recette.id
@@ -267,63 +228,43 @@ async function sauvegarderRecette() {
 
   await client.from("ingredients").insert(ingredientsAvecID);
 
+  // reset + fermeture
+  document.getElementById("nomRecette").value = "";
+  document.getElementById("ingredientsForm").innerHTML = "";
+  document.getElementById("formContainer").style.display = "none";
+  document.getElementById("arrow").innerText = "▼";
+
+  await chargerRecettes();
+
   alert("Recette enregistrée !");
 }
 
-
-document.getElementById("nomRecette").value = "";
-document.getElementById("ingredientsForm").innerHTML = "";
-
-  // 👉 recharge les recettes
-await chargerRecettes();
-
 // =====================
-// CHARGER LES RECETTES
+// CHARGER RECETTES
 // =====================
 async function chargerRecettes() {
-  let { data: recettesData } = await client.from("recettes").select("*");
 
+  let { data: recettesData } = await client.from("recettes").select("*");
   let { data: ingredientsData } = await client.from("ingredients").select("*");
 
-  recettes = recettesData.map(r => {
-    return {
-      nom: r.nom,
-      id: r.id,
-      ingredients: ingredientsData.filter(i => i.recette_id === r.id)
-    };
-  });
+  recettes = recettesData.map(r => ({
+    ...r,
+    ingredients: ingredientsData.filter(i => i.recette_id === r.id)
+  }));
 
   afficherRecettes();
 }
 
-
-  
 // =====================
-// DONNÉES (à personnaliser)
-// =====================
-let recettes = JSON.parse(localStorage.getItem("recettes")) || [];
-if (recettes.length === 0) {
-  recettes = [
-    {
-      nom: "Omelette",
-      ingredients: [
-        { nom: "oeuf", quantite: 2, unite: "pièce", ordre: 1 }
-      ]
-    }
-  ];
-}
-
-
-// =====================
-// AFFICHAGE RECETTES
+// AFFICHER RECETTES
 // =====================
 function afficherRecettes() {
   let div = document.getElementById("recettes");
   div.innerHTML = "";
 
   recettes.forEach((r, index) => {
-    let container = document.createElement("div");
-    container.className = "recette";
+    let d = document.createElement("div");
+    d.className = "recette";
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -332,10 +273,9 @@ function afficherRecettes() {
     let label = document.createElement("label");
     label.innerText = r.nom;
 
-    container.appendChild(checkbox);
-    container.appendChild(label);
-
-    div.appendChild(container);
+    d.appendChild(checkbox);
+    d.appendChild(label);
+    div.appendChild(d);
   });
 }
 
@@ -343,12 +283,11 @@ function afficherRecettes() {
 // GENERER LISTE
 // =====================
 function genererListe() {
+
   let liste = {};
 
   recettes.forEach((r, index) => {
-    let checked = document.getElementById("recette_" + index).checked;
-
-    if (checked) {
+    if (document.getElementById("recette_" + index).checked) {
       r.ingredients.forEach(ing => {
         if (liste[ing.nom]) {
           liste[ing.nom].quantite += ing.quantite;
@@ -362,37 +301,24 @@ function genererListe() {
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
 
-let ul = document.getElementById("courses");
-ul.innerHTML = "";
+  let groupes = {};
 
-// regrouper par rayon
-let groupes = {};
+  Object.values(liste).forEach(ing => {
+    if (!groupes[ing.ordre]) groupes[ing.ordre] = [];
+    groupes[ing.ordre].push(ing);
+  });
 
-Object.values(liste).forEach(ing => {
-  if (!groupes[ing.ordre]) {
-    groupes[ing.ordre] = [];
-  }
-  groupes[ing.ordre].push(ing);
-});
+  Object.keys(groupes).sort((a,b)=>a-b).forEach(ordre => {
 
-// trier les rayons
-Object.keys(groupes)
-  .sort((a, b) => a - b)
-  .forEach(ordre => {
-
-    // trouver nom du rayon
     let rayon = rayons.find(r => r.ordre == ordre);
 
-    // titre du rayon
     let titre = document.createElement("li");
     titre.innerText = rayon ? rayon.nom : "Autre";
     titre.style.fontWeight = "bold";
-    titre.style.marginTop = "15px";
     titre.style.background = "transparent";
 
     ul.appendChild(titre);
 
-    // ingrédients du rayon
     groupes[ordre].forEach(ing => {
       let li = document.createElement("li");
       li.innerText = `${ing.nom} : ${ing.quantite} ${ing.unite}`;
@@ -404,42 +330,34 @@ Object.keys(groupes)
 
       ul.appendChild(li);
     });
-  });
 
+  });
 
   sauvegarderEtat();
 }
 
 // =====================
-// COPIER LISTE
+// COPIER
 // =====================
 function copierListe() {
-  let items = document.querySelectorAll("#courses li");
-  let texte = "";
-
-  items.forEach(li => {
-    texte += li.innerText + "\n";
-  });
+  let texte = [...document.querySelectorAll("#courses li")]
+    .map(li => li.innerText)
+    .join("\n");
 
   navigator.clipboard.writeText(texte);
   alert("Liste copiée !");
 }
 
 // =====================
-// SAUVEGARDE
+// SAUVEGARDE LOCAL
 // =====================
 function sauvegarderEtat() {
-  let items = document.querySelectorAll("#courses li");
-  let etat = [];
+  let items = [...document.querySelectorAll("#courses li")].map(li => ({
+    texte: li.innerText,
+    checked: li.classList.contains("checked")
+  }));
 
-  items.forEach(li => {
-    etat.push({
-      texte: li.innerText,
-      checked: li.classList.contains("checked")
-    });
-  });
-
-  localStorage.setItem("listeCourses", JSON.stringify(etat));
+  localStorage.setItem("listeCourses", JSON.stringify(items));
 }
 
 // =====================
@@ -449,17 +367,14 @@ function restaurerEtat() {
   let data = localStorage.getItem("listeCourses");
   if (!data) return;
 
-  let etat = JSON.parse(data);
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
 
-  etat.forEach(item => {
+  JSON.parse(data).forEach(item => {
     let li = document.createElement("li");
     li.innerText = item.texte;
 
-    if (item.checked) {
-      li.classList.add("checked");
-    }
+    if (item.checked) li.classList.add("checked");
 
     li.onclick = () => {
       li.classList.toggle("checked");
