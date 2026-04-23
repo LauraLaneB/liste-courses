@@ -145,8 +145,17 @@ select {
 
 <h2>Liste de courses</h2>
 <ul id="courses"></ul>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
+
+// =====================
+// CONNECTION BASE DONNEES SUPABASE
+// =====================
+  
+const supabaseUrl = "https://napdbjcoqgyasyolmxzm.supabase.co/rest/v1/";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcGRiamNvcWd5YXN5b2xteHptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5Njk1ODMsImV4cCI6MjA5MjU0NTU4M30.7ogpMMEeuLuoffJ93ZC-Sl8IROOP_fRf8ocqVJi80oU";
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // =====================
 // LISTE RAYONS
@@ -194,43 +203,73 @@ function ajouterIngredient() {
 // =====================
 // SAUVEGARDER RECETTE
 // =====================
-function sauvegarderRecette() {
+async function sauvegarderRecette() {
   let nom = document.getElementById("nomRecette").value;
   let blocs = document.getElementById("ingredientsForm").children;
 
   let ingredients = [];
 
-for (let bloc of blocs) {
-  let inputs = bloc.querySelectorAll("input");
-  let select = bloc.querySelector("select");
+  for (let bloc of blocs) {
+    let inputs = bloc.querySelectorAll("input");
+    let select = bloc.querySelector("select");
 
-  if (inputs[0].value.trim() === "") continue;
+    if (inputs[0].value.trim() === "") continue;
 
-  ingredients.push({
-    nom: inputs[0].value,
-    quantite: parseFloat(inputs[1].value) || 0,
-    unite: inputs[2].value,
-    ordre: parseInt(select.value)
-  });
+    ingredients.push({
+      nom: inputs[0].value,
+      quantite: parseFloat(inputs[1].value) || 0,
+      unite: inputs[2].value,
+      ordre: parseInt(select.value)
+    });
+  }
+
+  // 1. insérer recette
+  let { data: recette, error } = await supabase
+    .from("recettes")
+    .insert([{ nom: nom }])
+    .select()
+    .single();
+
+  if (error) {
+    alert("Erreur recette");
+    return;
+  }
+
+  // 2. insérer ingrédients
+  let ingredientsAvecID = ingredients.map(i => ({
+    ...i,
+    recette_id: recette.id
+  }));
+
+  await supabase.from("ingredients").insert(ingredientsAvecID);
+
+  alert("Recette enregistrée !");
 }
 
 
-  let nouvelleRecette = {
-    nom: nom,
-    ingredients: ingredients
-  };
+document.getElementById("nomRecette").value = "";
+document.getElementById("ingredientsForm").innerHTML = "";
 
-  recettes.push(nouvelleRecette);
+// =====================
+// CHARGER LES RECETTES
+// =====================
+async function chargerRecettes() {
+  let { data: recettesData } = await supabase.from("recettes").select("*");
 
-  localStorage.setItem("recettes", JSON.stringify(recettes));
+  let { data: ingredientsData } = await supabase.from("ingredients").select("*");
 
-  alert("Recette enregistrée !");
+  recettes = recettesData.map(r => {
+    return {
+      nom: r.nom,
+      id: r.id,
+      ingredients: ingredientsData.filter(i => i.recette_id === r.id)
+    };
+  });
 
   afficherRecettes();
 }
 
-document.getElementById("nomRecette").value = "";
-document.getElementById("ingredientsForm").innerHTML = "";
+
   
 // =====================
 // DONNÉES (à personnaliser)
@@ -376,7 +415,7 @@ function restaurerEtat() {
 // =====================
 // INIT
 // =====================
-afficherRecettes();
+chargerRecettes();
 restaurerEtat();
 
 </script>
