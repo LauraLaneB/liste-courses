@@ -225,7 +225,7 @@ async function sauvegarderRecette() {
   }
 
   // 1. insérer recette
-  let { data: recette, error } = await supabase
+  let { data: recette, error } = await client
     .from("recettes")
     .insert([{ nom: nom }])
     .select()
