@@ -7,6 +7,10 @@
   <title>Liste de courses</title>
 
   <style>
+h2 {
+  user-select: none;
+}
+    
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -121,18 +125,22 @@ select {
 </head>
 
 <body>
-<h2>➕ Nouvelle recette</h2>
+<h2 onclick="toggleForm()" style="cursor:pointer;">
+  ➕ Nouvelle recette <span id="arrow">▼</span>
+</h2>
 
-<div class="form-card">
+<div id="formContainer" style="display:none;">
+  <div class="form-card">
 
-  <input id="nomRecette" placeholder="Nom de la recette">
+    <input id="nomRecette" placeholder="Nom de la recette">
 
-  <div id="ingredientsForm"></div>
+    <div id="ingredientsForm"></div>
 
-  <button class="secondary" onclick="ajouterIngredient()">+ Ajouter un ingrédient</button>
+    <button class="secondary" onclick="ajouterIngredient()">+ Ajouter un ingrédient</button>
 
-  <button onclick="sauvegarderRecette()">Enregistrer la recette</button>
+    <button onclick="sauvegarderRecette()">Enregistrer la recette</button>
 
+  </div>
 </div>
 
 
@@ -173,6 +181,23 @@ const rayons = [
   { nom: "Boisson", ordre: 9 }
 ];
 
+// =====================
+// AFFICHER AJOUTER NOUVELLE RECETTE SI JE CLIQUE DESSUS
+// =====================
+function toggleForm() {
+  let form = document.getElementById("formContainer");
+  let arrow = document.getElementById("arrow");
+
+  if (form.style.display === "none") {
+    form.style.display = "block";
+    arrow.innerText = "▲";
+  } else {
+    form.style.display = "none";
+    arrow.innerText = "▼";
+  }
+}
+
+  
   
 // =====================
 // AJOUTER INGREDIENTS
