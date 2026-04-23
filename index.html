@@ -150,6 +150,8 @@ const rayons = [
 // VARIABLES
 // =====================
 let recettes = [];
+let portions = {};
+
 
 // =====================
 // TOGGLE FORM
@@ -263,8 +265,8 @@ function afficherRecettes() {
   div.innerHTML = "";
 
   recettes.forEach((r, index) => {
-    let d = document.createElement("div");
-    d.className = "recette";
+    let container = document.createElement("div");
+    container.className = "recette";
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -273,9 +275,20 @@ function afficherRecettes() {
     let label = document.createElement("label");
     label.innerText = r.nom;
 
-    d.appendChild(checkbox);
-    d.appendChild(label);
-    div.appendChild(d);
+    // quand on coche → demander nb personnes
+    checkbox.onchange = () => {
+      if (checkbox.checked) {
+        let nb = prompt("Pour combien de personnes ?", "1");
+        portions[index] = parseInt(nb) || 1;
+      } else {
+        delete portions[index];
+      }
+    };
+
+    container.appendChild(checkbox);
+    container.appendChild(label);
+
+    div.appendChild(container);
   });
 }
 
@@ -286,17 +299,27 @@ function genererListe() {
 
   let liste = {};
 
-  recettes.forEach((r, index) => {
-    if (document.getElementById("recette_" + index).checked) {
-      r.ingredients.forEach(ing => {
-        if (liste[ing.nom]) {
-          liste[ing.nom].quantite += ing.quantite;
-        } else {
-          liste[ing.nom] = { ...ing };
-        }
-      });
-    }
-  });
+recettes.forEach((r, index) => {
+  let checked = document.getElementById("recette_" + index).checked;
+
+  if (checked) {
+    let coef = portions[index] || 1;
+
+    r.ingredients.forEach(ing => {
+      let quantite = ing.quantite * coef;
+
+      if (liste[ing.nom]) {
+        liste[ing.nom].quantite += quantite;
+      } else {
+        liste[ing.nom] = {
+          ...ing,
+          quantite: quantite
+        };
+      }
+    });
+  }
+});
+
 
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
