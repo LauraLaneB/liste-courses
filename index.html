@@ -301,6 +301,16 @@ function toggleForm() {
 }
 
 // =====================
+// RESTAURER AU CHARGEMENT
+// =====================  
+  function restaurerSelections() {
+  let sel = localStorage.getItem("recettesSelectionnees");
+  let port = localStorage.getItem("portions");
+
+  if (sel) recettesSelectionnees = JSON.parse(sel);
+  if (port) portions = JSON.parse(port);
+}
+// =====================
 // AJOUT INGREDIENT
 // =====================
 function ajouterIngredient() {
@@ -444,12 +454,14 @@ recettesFiltrees.forEach((r) => {
     btnPlus.onclick = () => {
       portions[id]++;
       span.innerText = portions[id];
+        sauvegarderSelections();
     };
 
     btnMoins.onclick = () => {
       if (portions[id] > 1) {
         portions[id]--;
         span.innerText = portions[id];
+          sauvegarderSelections();
       }
     };
 
@@ -460,6 +472,7 @@ qtyContainer.style.display = checkbox.checked ? "flex" : "none";
 
 checkbox.onchange = () => {
   recettesSelectionnees[id] = checkbox.checked;
+  sauvegarderSelections();
 
   if (checkbox.checked) {
     qtyContainer.style.display = "flex";
@@ -514,9 +527,15 @@ function toutDecocher() {
 
   // 4. vider le localStorage
   localStorage.removeItem("listeCourses");
+localStorage.removeItem("recettesSelectionnees");
+localStorage.removeItem("portions");
 
   // 5. rafraîchir l'affichage des recettes
   afficherRecettes();
+}
+function sauvegarderSelections() {
+  localStorage.setItem("recettesSelectionnees", JSON.stringify(recettesSelectionnees));
+  localStorage.setItem("portions", JSON.stringify(portions));
 }
 
 
@@ -641,7 +660,8 @@ function restaurerEtat() {
 // =====================
 chargerRecettes();
 restaurerEtat();
-
+restaurerSelections();
+chargerRecettes();
 </script>
 
 </body>
