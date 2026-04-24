@@ -544,27 +544,28 @@ function genererListe() {
 
   let liste = {};
 
-recettes.forEach((r, id) => {
-let checked = recettesSelectionnees[id];
+  recettes.forEach((r) => {
 
-  if (checked) {
-    let coef = portions[id] || 1;
+    let id = r.id;
+    let checked = recettesSelectionnees[id];
 
-    r.ingredients.forEach(ing => {
-      let quantite = ing.quantite * coef;
+    if (checked) {
+      let coef = portions[id] || 1;
 
-      if (liste[ing.nom]) {
-        liste[ing.nom].quantite += quantite;
-      } else {
-        liste[ing.nom] = {
-          ...ing,
-          quantite: quantite
-        };
-      }
-    });
-  }
-});
+      r.ingredients.forEach(ing => {
+        let quantite = ing.quantite * coef;
 
+        if (liste[ing.nom]) {
+          liste[ing.nom].quantite += quantite;
+        } else {
+          liste[ing.nom] = {
+            ...ing,
+            quantite: quantite
+          };
+        }
+      });
+    }
+  });
 
   let ul = document.getElementById("courses");
   ul.innerHTML = "";
@@ -580,10 +581,9 @@ let checked = recettesSelectionnees[id];
 
     let rayon = rayons.find(r => r.ordre == ordre);
 
-let titre = document.createElement("li");
-titre.innerText = "🛍️ " + (rayon ? rayon.nom : "Autre");
-titre.className = "rayon-titre";
-
+    let titre = document.createElement("li");
+    titre.innerText = "🛍️ " + (rayon ? rayon.nom : "Autre");
+    titre.className = "rayon-titre";
 
     ul.appendChild(titre);
 
@@ -603,6 +603,7 @@ titre.className = "rayon-titre";
 
   sauvegarderEtat();
 }
+
 
 // =====================
 // COPIER
