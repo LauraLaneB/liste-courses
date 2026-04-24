@@ -68,7 +68,7 @@ h2 {
   width: 100%;
   padding: 10px;
   background: #f5f5f5;
-  z-index: 1000;
+  z-: 1000;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -114,7 +114,7 @@ body {
   padding: 15px 20px;
   border-radius: 50px;
   font-size: 16px;
-  z-index: 1000;
+  z-: 1000;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
@@ -403,17 +403,17 @@ function afficherRecettes() {
     .filter(r => r.nom.toLowerCase().includes(recherche));
 
 recettesFiltrees.forEach((r) => {
-  let index = recettes.indexOf(r);
+  let r.id = r.id;
   // ✅ initialisation propre
-  if (!portions[index]) {
-    portions[index] = 1;
+  if (!portions[r.id]) {
+    portions[r.id] = 1;
   }
     let container = document.createElement("div");
     container.className = "recette";
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = "recette_" + index;
+    checkbox.id = "recette_" + r.id;
 
     let label = document.createElement("label");
     label.innerText = r.nom;
@@ -430,7 +430,7 @@ recettesFiltrees.forEach((r) => {
     btnMoins.style.width = "40px";
 
     let span = document.createElement("span");
-    span.innerText = portions[index] || 1;
+    span.innerText = portions[r.id] || 1;
     span.style.minWidth = "20px";
     span.style.textAlign = "center";
 
@@ -439,33 +439,33 @@ recettesFiltrees.forEach((r) => {
     btnPlus.style.width = "40px";
 
     // valeur initiale
-    portions[index] = 1;
+    portions[r.id] = 1;
 
     btnPlus.onclick = () => {
-      portions[index]++;
-      span.innerText = portions[index];
+      portions[r.id]++;
+      span.innerText = portions[r.id];
     };
 
     btnMoins.onclick = () => {
-      if (portions[index] > 1) {
-        portions[index]--;
-        span.innerText = portions[index];
+      if (portions[r.id] > 1) {
+        portions[r.id]--;
+        span.innerText = portions[r.id];
       }
     };
 
     // afficher/masquer
 // restaurer état
-checkbox.checked = recettesSelectionnees[index] || false;
+checkbox.checked = recettesSelectionnees[r.id] || false;
 qtyContainer.style.display = checkbox.checked ? "flex" : "none";
 
 checkbox.onchange = () => {
-  recettesSelectionnees[index] = checkbox.checked;
+  recettesSelectionnees[r.id] = checkbox.checked;
 
   if (checkbox.checked) {
     qtyContainer.style.display = "flex";
   } else {
     qtyContainer.style.display = "none";
-    portions[index] = 1;
+    portions[r.id] = 1;
     span.innerText = "1";
   }
 };
@@ -527,11 +527,11 @@ function genererListe() {
 
   let liste = {};
 
-recettes.forEach((r, index) => {
-let checked = recettesSelectionnees[index];
+recettes.forEach((r, r.id) => {
+let checked = recettesSelectionnees[r.id];
 
   if (checked) {
-    let coef = portions[index] || 1;
+    let coef = portions[r.id] || 1;
 
     r.ingredients.forEach(ing => {
       let quantite = ing.quantite * coef;
