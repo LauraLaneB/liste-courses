@@ -283,7 +283,11 @@ function afficherRecettes() {
   let div = document.getElementById("recettes");
   div.innerHTML = "";
 
+  // ✅ TRI ALPHABÉTIQUE
+  recettes.sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }));
+
   recettes.forEach((r, index) => {
+
     let container = document.createElement("div");
     container.className = "recette";
 
