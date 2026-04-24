@@ -449,7 +449,6 @@ recettesFiltrees.forEach((r) => {
     btnPlus.style.width = "40px";
 
     // valeur initiale
-    portions[id] = 1;
 
     btnPlus.onclick = () => {
       portions[id]++;
@@ -478,8 +477,7 @@ checkbox.onchange = () => {
     qtyContainer.style.display = "flex";
   } else {
     qtyContainer.style.display = "none";
-    portions[id] = 1;
-    span.innerText = "1";
+
   }
 };
 
