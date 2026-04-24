@@ -60,13 +60,51 @@ h2 {
   transform: none;
 }
   
-#searchRecette {
+.search-container {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
+  padding: 10px;
+  background: #f5f5f5;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#searchRecette {
+  width: 90%;
+  margin: 0 auto;
+  display: block;
+  padding: 10px 35px 10px 10px;
+  border-radius: 20px;
   border: 1px solid #ccc;
   font-size: 16px;
+}
+
+#clearSearch {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  display: none;
+}
+
+  
+#clearSearch {
+  background: #eee;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body {
+  padding-top: 70px;
 }
 
 .floating-btn {
@@ -164,13 +202,21 @@ button {
 </div>
 
 <h1>🛒 Mes recettes</h1>
+<button class="secondary" onclick="toutDecocher()">
+  ❌ Tout décocher
+</button>
 
+<div class="search-container">
   <input 
-  type="text" 
-  id="searchRecette" 
-  placeholder="🔍 Rechercher une recette..." 
-  oninput="afficherRecettes()"
->
+    type="text" 
+    id="searchRecette" 
+    placeholder="🔍 Rechercher..." 
+    oninput="handleSearchInput()"
+  >
+  <span id="clearSearch" onclick="clearSearch()">✕</span>
+</div>
+
+
 
   
   <div id="recettes"></div>
@@ -216,6 +262,7 @@ const rayons = [
 // =====================
 let recettes = [];
 let portions = {};
+let recettesSelectionnees = {};
 
 
 // =====================
@@ -385,15 +432,22 @@ recettesFiltrees.forEach((r) => {
     };
 
     // afficher/masquer
-    checkbox.onchange = () => {
-      if (checkbox.checked) {
-        qtyContainer.style.display = "flex";
-      } else {
-        qtyContainer.style.display = "none";
-        portions[index] = 1;
-        span.innerText = "1";
-      }
-    };
+// restaurer état
+checkbox.checked = recettesSelectionnees[index] || false;
+qtyContainer.style.display = checkbox.checked ? "flex" : "none";
+
+checkbox.onchange = () => {
+  recettesSelectionnees[index] = checkbox.checked;
+
+  if (checkbox.checked) {
+    qtyContainer.style.display = "flex";
+  } else {
+    qtyContainer.style.display = "none";
+    portions[index] = 1;
+    span.innerText = "1";
+  }
+};
+
 
     qtyContainer.appendChild(btnMoins);
     qtyContainer.appendChild(span);
@@ -409,6 +463,41 @@ recettesFiltrees.forEach((r) => {
 
 
 
+  function clearSearch() {
+  let input = document.getElementById("searchRecette");
+  input.value = "";
+  document.getElementById("clearSearch").style.display = "none";
+  afficherRecettes();
+}
+
+function handleSearchInput() {
+  let input = document.getElementById("searchRecette");
+  let clearBtn = document.getElementById("clearSearch");
+
+  clearBtn.style.display = input.value ? "block" : "none";
+
+  afficherRecettes();
+}
+function toutDecocher() {
+
+  // 1. reset des sélections
+  recettesSelectionnees = {};
+
+  // 2. reset des portions
+  portions = {};
+
+  // 3. vider la liste affichée
+  let ul = document.getElementById("courses");
+  ul.innerHTML = "";
+
+  // 4. vider le localStorage
+  localStorage.removeItem("listeCourses");
+
+  // 5. rafraîchir l'affichage des recettes
+  afficherRecettes();
+}
+
+
 // =====================
 // GENERER LISTE
 // =====================
@@ -417,7 +506,7 @@ function genererListe() {
   let liste = {};
 
 recettes.forEach((r, index) => {
-  let checked = document.getElementById("recette_" + index).checked;
+let checked = recettesSelectionnees[index];
 
   if (checked) {
     let coef = portions[index] || 1;
