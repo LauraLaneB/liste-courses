@@ -131,7 +131,16 @@ button {
 </div>
 
 <h1>🛒 Mes recettes</h1>
-<div id="recettes"></div>
+
+  <input 
+  type="text" 
+  id="searchRecette" 
+  placeholder="🔍 Rechercher une recette..." 
+  oninput="afficherRecettes()"
+>
+
+  
+  <div id="recettes"></div>
 
 <button onclick="genererListe()">Générer ma liste</button>
 <button onclick="copierListe()">Copier la liste</button>
@@ -283,10 +292,15 @@ function afficherRecettes() {
   let div = document.getElementById("recettes");
   div.innerHTML = "";
 
-  // ✅ TRI ALPHABÉTIQUE
-  recettes.sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }));
+  let recherche = document.getElementById("searchRecette").value.toLowerCase();
 
-  recettes.forEach((r, index) => {
+  // ✅ TRI + FILTRE
+  let recettesFiltrees = recettes
+    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }))
+    .filter(r => r.nom.toLowerCase().includes(recherche));
+
+  recettesFiltrees.forEach((r, index) => {
+
 
     let container = document.createElement("div");
     container.className = "recette";
