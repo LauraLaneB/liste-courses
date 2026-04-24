@@ -382,7 +382,7 @@ async function chargerRecettes() {
 
   recettes = recettesData.map(r => ({
     ...r,
-    ingredients: ingredientsData.filter(i => i.recette_id === r.id)
+    ingredients: ingredientsData.filter(i => i.recette_id === id)
   }));
 
   afficherRecettes();
@@ -403,17 +403,17 @@ function afficherRecettes() {
     .filter(r => r.nom.toLowerCase().includes(recherche));
 
 recettesFiltrees.forEach((r) => {
-  let r.id = r.id;
+  let id = r.id;
   // ✅ initialisation propre
-  if (!portions[r.id]) {
-    portions[r.id] = 1;
+  if (!portions[id]) {
+    portions[id] = 1;
   }
     let container = document.createElement("div");
     container.className = "recette";
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = "recette_" + r.id;
+    checkbox.id = "recette_" + id;
 
     let label = document.createElement("label");
     label.innerText = r.nom;
@@ -430,7 +430,7 @@ recettesFiltrees.forEach((r) => {
     btnMoins.style.width = "40px";
 
     let span = document.createElement("span");
-    span.innerText = portions[r.id] || 1;
+    span.innerText = portions[id] || 1;
     span.style.minWidth = "20px";
     span.style.textAlign = "center";
 
@@ -439,33 +439,33 @@ recettesFiltrees.forEach((r) => {
     btnPlus.style.width = "40px";
 
     // valeur initiale
-    portions[r.id] = 1;
+    portions[id] = 1;
 
     btnPlus.onclick = () => {
-      portions[r.id]++;
-      span.innerText = portions[r.id];
+      portions[id]++;
+      span.innerText = portions[id];
     };
 
     btnMoins.onclick = () => {
-      if (portions[r.id] > 1) {
-        portions[r.id]--;
-        span.innerText = portions[r.id];
+      if (portions[id] > 1) {
+        portions[id]--;
+        span.innerText = portions[id];
       }
     };
 
     // afficher/masquer
 // restaurer état
-checkbox.checked = recettesSelectionnees[r.id] || false;
+checkbox.checked = recettesSelectionnees[id] || false;
 qtyContainer.style.display = checkbox.checked ? "flex" : "none";
 
 checkbox.onchange = () => {
-  recettesSelectionnees[r.id] = checkbox.checked;
+  recettesSelectionnees[id] = checkbox.checked;
 
   if (checkbox.checked) {
     qtyContainer.style.display = "flex";
   } else {
     qtyContainer.style.display = "none";
-    portions[r.id] = 1;
+    portions[id] = 1;
     span.innerText = "1";
   }
 };
@@ -527,11 +527,11 @@ function genererListe() {
 
   let liste = {};
 
-recettes.forEach((r, r.id) => {
-let checked = recettesSelectionnees[r.id];
+recettes.forEach((r, id) => {
+let checked = recettesSelectionnees[id];
 
   if (checked) {
-    let coef = portions[r.id] || 1;
+    let coef = portions[id] || 1;
 
     r.ingredients.forEach(ing => {
       let quantite = ing.quantite * coef;
