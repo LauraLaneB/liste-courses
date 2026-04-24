@@ -46,6 +46,15 @@ h2 {
   margin-left: auto;
   transform: none;
 }
+  
+#searchRecette {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
 
 
 button {
@@ -299,8 +308,8 @@ function afficherRecettes() {
     .sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }))
     .filter(r => r.nom.toLowerCase().includes(recherche));
 
-  recettesFiltrees.forEach((r, index) => {
-
+recettesFiltrees.forEach((r) => {
+  let index = recettes.indexOf(r);
 
     let container = document.createElement("div");
     container.className = "recette";
