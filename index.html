@@ -382,7 +382,7 @@ async function chargerRecettes() {
 
   recettes = recettesData.map(r => ({
     ...r,
-    ingredients: ingredientsData.filter(i => i.recette_id === id)
+    ingredients: ingredientsData.filter(i => i.recette_id === r.id)
   }));
 
   afficherRecettes();
