@@ -61,8 +61,9 @@ h2 {
 }
   
 .search-container {
-  position: fixed;
-  top: 10;
+  position: sticky;
+  border-bottom: 1px solid #ddd;
+  top: 0;
   left: 0;
   width: 100%;
   padding: 10px;
@@ -403,7 +404,10 @@ function afficherRecettes() {
 
 recettesFiltrees.forEach((r) => {
   let index = recettes.indexOf(r);
-
+  // ✅ initialisation propre
+  if (!portions[index]) {
+    portions[index] = 1;
+  }
     let container = document.createElement("div");
     container.className = "recette";
 
@@ -426,7 +430,7 @@ recettesFiltrees.forEach((r) => {
     btnMoins.style.width = "40px";
 
     let span = document.createElement("span");
-    span.innerText = "1";
+    span.innerText = portions[index] || 1;
     span.style.minWidth = "20px";
     span.style.textAlign = "center";
 
